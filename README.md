@@ -1,4 +1,4 @@
-# ki-we_backend
+# 🥝 ki-we_backend
 > Ki-We MVP프로젝트 Backend입니다.
 
 
