@@ -66,8 +66,8 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 
     private void saveAuthentication(Member member) {
         UserDetails user =  User.builder()
-                .username(member.getKakaoNickname())
-                .password(member.getRefreshToken())
+                .username(member.getKakaoId().toString())
+                .password(member.getKakaoId().toString() + member.getMemberToken())
                 .roles("USER")
                 .build();
 
