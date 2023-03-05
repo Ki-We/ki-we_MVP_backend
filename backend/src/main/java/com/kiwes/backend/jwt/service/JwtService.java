@@ -49,7 +49,7 @@ public class JwtService {
                 .withSubject(member.getKakaoEmail())
                 .withExpiresAt(new Date(System.currentTimeMillis() + accessTokenValidityInSeconds * 1000))
                 .withClaim(ID, member.getKakaoId())
-                .withClaim(KAKAONICKNAME, member.getKakaoNickname())
+                .withClaim(KAKAONICKNAME, member.getNickname())
                 .sign(Algorithm.HMAC512(secret));
     }
 
@@ -60,7 +60,7 @@ public class JwtService {
                 .sign(Algorithm.HMAC512(secret));
     }
 
-    public void updateRefreshToken(String kakaoId, String refreshToken) {
+    public void updateRefreshToken(Long kakaoId, String refreshToken) {
         memberRepository.findByKakaoId(kakaoId)
                 .ifPresentOrElse(
                         member -> member.updateRefreshToken(refreshToken),
@@ -102,10 +102,6 @@ public class JwtService {
 
     public void setAccessTokenHeader(HttpServletResponse response, String accessToken) {
         response.setHeader(accessHeader, accessToken);
-    }
-
-    public void setRefreshTokenHeader(HttpServletResponse response, String refreshToken) {
-        response.setHeader(refreshHeader, refreshToken);
     }
 
     public boolean isTokenValid(String token) {
