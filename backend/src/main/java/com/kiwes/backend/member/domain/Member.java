@@ -23,11 +23,9 @@ public class Member {
 
     private Long kakaoId;
 
-    private String kakaoProfileImg;
+    private String profileImg;
 
     private String kakaoEmail;
-
-    private String kakaoNickname;
 
     private String birthday;
 
@@ -41,6 +39,8 @@ public class Member {
 
     private String memberIntro;
 
+    private String memberToken;
+
     @Column(length = 1000)
     private String refreshToken;
 
@@ -50,13 +50,12 @@ public class Member {
     @UpdateTimestamp
     private Timestamp lastModifiedTime;
 
-
     public void updateRefreshToken(String refreshToken) {
         this.refreshToken = refreshToken;
     }
 
-    public void addKakaoProfileImage(String kakaoProfileImg) {
-        this.kakaoProfileImg = kakaoProfileImg;
+    public void updateProfileImage(String kakaoProfileImg) {
+        this.profileImg = kakaoProfileImg;
     }
 
 
