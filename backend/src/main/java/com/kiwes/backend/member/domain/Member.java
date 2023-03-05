@@ -1,6 +1,5 @@
 package com.kiwes.backend.member.domain;
 
-import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -8,6 +7,7 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
+import javax.persistence.*;
 import java.sql.Timestamp;
 
 @Entity
@@ -26,6 +26,8 @@ public class Member {
     private String kakaoProfileImg;
 
     private String kakaoEmail;
+
+    private String kakaoNickname;
 
     private String birthday;
 
