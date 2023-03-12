@@ -33,6 +33,10 @@ public class Member {
 
     private String nickname;
 
+    private String category;
+
+    private String language;
+
     private Boolean privacyAgreement;
 
     private Boolean termAgreement;
@@ -40,6 +44,8 @@ public class Member {
     private String memberIntro;
 
     private String memberToken;
+
+    private String email;
 
     @Column(length = 1000)
     private String refreshToken;
@@ -56,6 +62,13 @@ public class Member {
 
     public void updateProfileImage(String kakaoProfileImg) {
         this.profileImg = kakaoProfileImg;
+    }
+    public void updateMember(MemberCreate memberCreate) {
+        this.profileImg = memberCreate.getProfileImage();
+        this.nickname = memberCreate.getNickname();
+        this.gender = memberCreate.getGender();
+        this.birthday = memberCreate.getBirthday();
+        this.email = memberCreate.getEmail();
     }
 
 
