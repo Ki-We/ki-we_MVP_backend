@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kiwes.backend.global.utils.SecurityUtil;
 import com.kiwes.backend.jwt.service.JwtService;
 import com.kiwes.backend.member.domain.Member;
+import com.kiwes.backend.member.domain.MemberCreate;
 import com.kiwes.backend.member.domain.MemberResponse;
 import com.kiwes.backend.member.domain.kakao.KakaoProfile;
 import com.kiwes.backend.member.domain.kakao.OAuthToken;
@@ -21,7 +22,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.util.Optional;
 import java.util.Random;
 
 @Service
@@ -126,7 +129,7 @@ public class MemberService {
 
 
         }else {
-            Member member = memberRepository.findByKakaoNickname(profile.getProperties().getNickname()).orElseThrow();
+            Member member = memberRepository.findByNickname(profile.getProperties().getNickname()).orElseThrow();
             member.updateRefreshToken(jwtService.createRefreshToken());
             return jwtService.createAccessToken(member);
         }
@@ -159,14 +162,21 @@ public class MemberService {
 
     public String getMemberTokenByToken(String token) {
         KakaoProfile profile = findProfile(token);
-        Member member = memberRepository.findByKakaoNickname(profile.getProperties().getNickname()).orElseThrow();
+        Member member = memberRepository.findByNickname(profile.getProperties().getNickname()).orElseThrow();
 
         return member.getMemberToken();
     }
 
+
+    public void saveMember(MemberCreate memberCreate, MultipartFile multipartFile) { // s3 bucket 설정 이후 수정할것
+        String loginUsername = SecurityUtil.getLoginUsername();
+        Member member = memberRepository.findByKakaoId(Long.valueOf(loginUsername)).orElseThrow();
+        member.updateMember(memberCreate);
+    }
+
     public MemberResponse getMyInfo() {
 
-        Member member = memberRepository.findByKakaoNickname((SecurityUtil.getLoginUsername()))
+        Member member = memberRepository.findByNickname((SecurityUtil.getLoginUsername()))
                 .orElseThrow();
 
         return MemberResponse.builder()
@@ -179,6 +189,8 @@ public class MemberService {
                 .birth(member.getBirthday())
                 .build();
     }
+
+
 
 
 
