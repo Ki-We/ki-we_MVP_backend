@@ -54,7 +54,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 
                 accessToken -> jwtService.extractUsername(accessToken).ifPresent(
 
-                        kakaoNickname -> memberRepository.findByKakaoNickname(kakaoNickname).ifPresent(
+                        nickname -> memberRepository.findByNickname(nickname).ifPresent(
 
                                 this::saveAuthentication
                         )
