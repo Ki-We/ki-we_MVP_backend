@@ -2,6 +2,7 @@ package com.kiwes.backend.member.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.kiwes.backend.global.service.S3Uploader;
 import com.kiwes.backend.global.utils.SecurityUtil;
 import com.kiwes.backend.jwt.service.JwtService;
 import com.kiwes.backend.member.domain.Member;
@@ -19,20 +20,22 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.Optional;
 import java.util.Random;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class MemberService {
 
     private final MemberRepository memberRepository;
     private final JwtService jwtService;
+    private final S3Uploader s3Uploader;
 
     @Value("${spring.security.oauth2.client.registration.kakao.client-id}")
     String client_id;
@@ -168,9 +171,12 @@ public class MemberService {
     }
 
 
-    public void saveMember(MemberCreate memberCreate, MultipartFile multipartFile) { // s3 bucket 설정 이후 수정할것
+    public void saveMember(MemberCreate memberCreate, MultipartFile multipartFile) {
         String loginUsername = SecurityUtil.getLoginUsername();
         Member member = memberRepository.findByKakaoId(Long.valueOf(loginUsername)).orElseThrow();
+        if(!multipartFile.isEmpty()) {
+            member.updateProfileImage(s3Uploader.getThumbnailPath(s3Uploader.uploadImage(multipartFile)));
+        }
         member.updateMember(memberCreate);
     }
 
