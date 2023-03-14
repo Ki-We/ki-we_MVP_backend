@@ -4,7 +4,7 @@
 
 ## 개발 환경
 - Java: 17  
-- Spring Boot: 버전(미정)    
+- Spring Boot: 2.6.9    
   - Spring Security
   - Spring Data JPA
 - AWS 
