@@ -54,9 +54,9 @@ public class MemberController {
     @ResponseStatus(HttpStatus.OK)
     @GetMapping("/oauth/me")
     public MemberResponse getMyInfo(HttpServletResponse response) {
-        MemberResponse memberResponse = memberService.getMyInfo();
-        return memberResponse;
+        return memberService.getMyInfo();
     }
+
 
 
 }
