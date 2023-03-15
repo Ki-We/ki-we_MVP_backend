@@ -4,6 +4,7 @@ import com.kiwes.backend.comment.domain.Comment;
 import com.kiwes.backend.member.domain.Member;
 import com.kiwes.backend.qna.domain.Qna;
 import com.kiwes.backend.reply.domain.Reply;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -14,6 +15,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
+@Getter
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
+@RequiredArgsConstructor
 public class Post {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -65,4 +71,12 @@ public class Post {
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Reply> replyList = new ArrayList<>();
 
+    public void updatePostImage(String postImage) {
+        this.postImage = postImage;
+    }
+
+    public void confirmHost(Member member) {
+        this.host = member;
+        member.addPost(this);
+    }
 }
