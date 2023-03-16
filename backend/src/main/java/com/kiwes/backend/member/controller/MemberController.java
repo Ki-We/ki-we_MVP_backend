@@ -24,7 +24,7 @@ public class MemberController {
 
     @GetMapping("/")
     public String start() {
-        return "이도하 짱";
+        return "KiWES 서비스 페이지입니다.";
     }
 
     @GetMapping("/oauth/token")
