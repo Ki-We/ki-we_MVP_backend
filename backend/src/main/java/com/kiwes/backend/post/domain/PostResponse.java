@@ -10,6 +10,7 @@ import java.time.LocalDateTime;
 @Builder
 @AllArgsConstructor
 public class PostResponse {
+    private Long postId;
     private String title;
     private String body;
     private LocalDateTime meetingDate;
