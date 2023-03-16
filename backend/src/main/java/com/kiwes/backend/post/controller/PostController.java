@@ -8,6 +8,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
+
 @RestController
 @RequiredArgsConstructor
 public class PostController {
@@ -23,7 +25,13 @@ public class PostController {
     @GetMapping("/post/{postId}")
     @ResponseStatus(HttpStatus.OK)
     public PostResponse getPost(@PathVariable Long postId) {
+        return postService.getPost(postId);
+    }
 
+    @GetMapping("/posts")
+    @ResponseStatus(HttpStatus.OK)
+    public List<PostResponse> getPostList() {
+        return postService.getPostList();
     }
 
 }
