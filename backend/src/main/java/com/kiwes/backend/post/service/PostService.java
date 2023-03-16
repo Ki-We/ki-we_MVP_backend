@@ -2,6 +2,8 @@ package com.kiwes.backend.post.service;
 
 import com.kiwes.backend.global.service.S3Uploader;
 import com.kiwes.backend.global.utils.SecurityUtil;
+import com.kiwes.backend.heart.repository.HeartRepository;
+import com.kiwes.backend.join.repository.JoinRepository;
 import com.kiwes.backend.member.domain.Member;
 import com.kiwes.backend.member.repository.MemberRepository;
 import com.kiwes.backend.post.domain.Post;
@@ -12,11 +14,17 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+
 @Service
 @RequiredArgsConstructor
 public class PostService {
     private final MemberRepository memberRepository;
     private final PostRepository postRepository;
+    private final HeartRepository heartRepository;
+    private final JoinRepository joinRepository;
     private final S3Uploader s3Uploader;
 
     public void savePost(PostCreate postCreate, MultipartFile multipartFile) {
@@ -33,6 +41,7 @@ public class PostService {
                 .category(postCreate.getCategory())
                 .hashtag(postCreate.getHashtag())
                 .chatLink(postCreate.getChatLink())
+                .viewCount(0L)
                 .build();
 
         Member member = memberRepository.findByKakaoId(Long.parseLong(SecurityUtil.getLoginUsername())).orElseThrow();
@@ -47,7 +56,9 @@ public class PostService {
     public PostResponse getPost(Long postId) {
         Member loginMember = memberRepository.findByKakaoId(Long.parseLong(SecurityUtil.getLoginUsername())).orElseThrow();
         Post post = postRepository.findById(postId).orElseThrow();
-        PostResponse.builder()
+        post.upperView();
+        PostResponse result = PostResponse.builder()
+                .postId(post.getPostId())
                 .title(post.getTitle())
                 .body(post.getBody())
                 .meetingDate(post.getMeetingDate())
@@ -62,9 +73,42 @@ public class PostService {
                 .chatLink(post.getChatLink())
                 .hostId(post.getHost().getMemberId())
                 .hostProfileImg(post.getHost().getProfileImg())
+                .isHost(Objects.equals(loginMember.getMemberId(), post.getHost().getMemberId()))
+                .hasLike(heartRepository.findByMemberAndPost(loginMember, post).isPresent())
+                .hasJoin(joinRepository.findByMemberAndPost(loginMember, post).isPresent())
+                .build();
+        return result;
+    }
 
+    public List<PostResponse> getPostList() {
+        Member loginMember = memberRepository.findByKakaoId(Long.parseLong(SecurityUtil.getLoginUsername())).orElseThrow();
+        List<Post> postList = postRepository.findAll();
+        List<PostResponse> result = new ArrayList<>();
+        postList.forEach(post -> {
+            result.add(
+                    PostResponse.builder()
+                            .postId(post.getPostId())
+                            .title(post.getTitle())
+                            .body(post.getBody())
+                            .meetingDate(post.getMeetingDate())
+                            .deadLineDate(post.getDeadLineDate())
+                            .place(post.getPlace())
+                            .price(post.getPrice())
+                            .recruitNum(post.getRecruitNum())
+                            .meetingGender(post.getMeetingGender())
+                            .language(post.getLanguage())
+                            .category(post.getCategory())
+                            .hashtag(post.getHashtag())
+                            .chatLink(post.getChatLink())
+                            .hostId(post.getHost().getMemberId())
+                            .hostProfileImg(post.getHost().getProfileImg())
+                            .isHost(Objects.equals(loginMember.getMemberId(), post.getHost().getMemberId()))
+                            .hasLike(heartRepository.findByMemberAndPost(loginMember, post).isPresent())
+                            .hasJoin(joinRepository.findByMemberAndPost(loginMember, post).isPresent())
+                            .build()
+            );
+        });
 
-
-
+        return result;
     }
 }
