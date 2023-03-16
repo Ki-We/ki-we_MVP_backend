@@ -19,7 +19,6 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@RequiredArgsConstructor
 public class Post {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -58,6 +57,8 @@ public class Post {
 
     private String chatLink;
 
+    private Long viewCount;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     private Member host;
@@ -71,6 +72,19 @@ public class Post {
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Reply> replyList = new ArrayList<>();
 
+
+    public void addComment(Comment comment) {
+        commentList.add(comment);
+    }
+
+    public void addQna(Qna qna) {
+        qnaList.add(qna);
+    }
+
+    public void addReply(Reply reply) {
+        replyList.add(reply);
+    }
+
     public void updatePostImage(String postImage) {
         this.postImage = postImage;
     }
@@ -79,4 +93,10 @@ public class Post {
         this.host = member;
         member.addPost(this);
     }
+
+    public void upperView() {
+        this.viewCount += 1L;
+    }
+
+
 }
