@@ -28,4 +28,6 @@ public class PostResponse {
     private Boolean isHost;
     private Boolean hasJoin;
     private Boolean hasLike;
+    private Boolean hasQna;
+    private Boolean hasComment;
 }
