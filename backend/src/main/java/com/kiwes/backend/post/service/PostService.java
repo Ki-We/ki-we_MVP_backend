@@ -1,15 +1,17 @@
 package com.kiwes.backend.post.service;
 
+import com.kiwes.backend.comment.repository.CommentRepository;
 import com.kiwes.backend.global.service.S3Uploader;
 import com.kiwes.backend.global.utils.SecurityUtil;
 import com.kiwes.backend.heart.repository.HeartRepository;
-import com.kiwes.backend.join.repository.JoinRepository;
+import com.kiwes.backend.participation.repository.ParticipationRepository;
 import com.kiwes.backend.member.domain.Member;
 import com.kiwes.backend.member.repository.MemberRepository;
 import com.kiwes.backend.post.domain.Post;
 import com.kiwes.backend.post.domain.PostCreate;
 import com.kiwes.backend.post.domain.PostResponse;
 import com.kiwes.backend.post.repository.PostRepository;
+import com.kiwes.backend.qna.repository.QnaRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -24,7 +26,9 @@ public class PostService {
     private final MemberRepository memberRepository;
     private final PostRepository postRepository;
     private final HeartRepository heartRepository;
-    private final JoinRepository joinRepository;
+    private final ParticipationRepository participationRepository;
+    private final CommentRepository commentRepository;
+    private final QnaRepository qnaRepository;
     private final S3Uploader s3Uploader;
 
     public void savePost(PostCreate postCreate, MultipartFile multipartFile) {
@@ -75,7 +79,9 @@ public class PostService {
                 .hostProfileImg(post.getHost().getProfileImg())
                 .isHost(Objects.equals(loginMember.getMemberId(), post.getHost().getMemberId()))
                 .hasLike(heartRepository.findByMemberAndPost(loginMember, post).isPresent())
-                .hasJoin(joinRepository.findByMemberAndPost(loginMember, post).isPresent())
+                .hasJoin(participationRepository.findByMemberAndPost(loginMember, post).isPresent())
+                .hasComment(commentRepository.findByPost(post).isPresent())
+                .hasQna(qnaRepository.findByPost(post).isPresent())
                 .build();
         return result;
     }
@@ -104,7 +110,9 @@ public class PostService {
                             .hostProfileImg(post.getHost().getProfileImg())
                             .isHost(Objects.equals(loginMember.getMemberId(), post.getHost().getMemberId()))
                             .hasLike(heartRepository.findByMemberAndPost(loginMember, post).isPresent())
-                            .hasJoin(joinRepository.findByMemberAndPost(loginMember, post).isPresent())
+                            .hasJoin(participationRepository.findByMemberAndPost(loginMember, post).isPresent())
+                            .hasComment(commentRepository.findByPost(post).isPresent())
+                            .hasQna(qnaRepository.findByPost(post).isPresent())
                             .build()
             );
         });
