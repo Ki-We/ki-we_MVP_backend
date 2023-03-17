@@ -9,6 +9,7 @@ import com.kiwes.backend.qna.domain.Qna;
 import com.kiwes.backend.qna.domain.QnaCreate;
 import com.kiwes.backend.qna.domain.QnaResponse;
 import com.kiwes.backend.qna.repository.QnaRepository;
+import com.kiwes.backend.reply.repository.ReplyRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -23,6 +24,7 @@ public class QnaService {
     private final QnaRepository qnaRepository;
     private final PostRepository postRepository;
     private final MemberRepository memberRepository;
+    private final ReplyRepository replyRepository;
 
     public void saveQna(QnaCreate qnaCreate) {
         Post post = postRepository.findById(qnaCreate.getPostId()).orElseThrow();
@@ -51,6 +53,7 @@ public class QnaService {
                         .writerNickname(qna.getWriter().getNickname())
                         .writerProfileImg(qna.getWriter().getProfileImg())
                         .isWriter(Objects.equals(qna.getWriter().getMemberToken(), loginMember.getMemberToken()))
+                        .hasReply(replyRepository.findByQna(qna).isPresent())
                         .build())
         );
 
