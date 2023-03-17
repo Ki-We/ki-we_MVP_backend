@@ -17,4 +17,5 @@ public class QnaResponse {
     private String writerNickname;
     private String writerProfileImg;
     private Boolean isWriter;
+    private Boolean hasReply;
 }
