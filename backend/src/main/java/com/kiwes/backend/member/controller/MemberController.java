@@ -1,7 +1,9 @@
 package com.kiwes.backend.member.controller;
 
+import com.kiwes.backend.global.service.MailService;
 import com.kiwes.backend.member.domain.Member;
 import com.kiwes.backend.member.domain.MemberCreate;
+import com.kiwes.backend.member.domain.MemberEdit;
 import com.kiwes.backend.member.domain.MemberResponse;
 import com.kiwes.backend.member.domain.kakao.OAuthToken;
 import com.kiwes.backend.member.repository.MemberRepository;
@@ -21,6 +23,7 @@ public class MemberController {
 
     private final MemberService memberService;
     private final MemberRepository memberRepository;
+    private final MailService mailService;
 
     @GetMapping("/")
     public String start() {
@@ -45,7 +48,7 @@ public class MemberController {
     }
 
     @ResponseStatus(HttpStatus.CREATED)
-    @PostMapping("member")
+    @PostMapping("/member")
     public void completeLogin(@ModelAttribute MemberCreate memberCreate, @RequestPart(required = false)MultipartFile multipartFile) {
         memberService.saveMember(memberCreate, multipartFile);
 
@@ -53,10 +56,34 @@ public class MemberController {
 
     @ResponseStatus(HttpStatus.OK)
     @GetMapping("/oauth/me")
-    public MemberResponse getMyInfo(HttpServletResponse response) {
+    public MemberResponse getMyProfile(HttpServletResponse response) {
         return memberService.getMyInfo();
     }
 
+    @ResponseStatus(HttpStatus.OK)
+    @GetMapping("/oauth/{memberToken}")
+    public MemberResponse getMember(@PathVariable String memberToken) {
+        return memberService.getMember(memberToken);
+    }
+
+
+    @ResponseStatus(HttpStatus.OK)
+    @PatchMapping("/member/{memberToken}")
+    public void editMember(@PathVariable String memberToken, @RequestBody MemberEdit memberEdit) throws Exception {
+        memberService.edit(memberToken, memberEdit);
+    }
+
+
+    @PostMapping("/mail")
+    public String mailConfirm(@RequestBody String email) throws Exception {
+        String code = mailService.sendSimpleMessage(email);
+        return code;
+    }
+
+    @DeleteMapping("/member")
+    public void deleteMember(@RequestBody String memberToken) throws Exception{
+        memberService.delete(memberToken);
+    }
 
 
 }
