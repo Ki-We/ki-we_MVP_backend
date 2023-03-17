@@ -5,9 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kiwes.backend.global.service.S3Uploader;
 import com.kiwes.backend.global.utils.SecurityUtil;
 import com.kiwes.backend.jwt.service.JwtService;
-import com.kiwes.backend.member.domain.Member;
-import com.kiwes.backend.member.domain.MemberCreate;
-import com.kiwes.backend.member.domain.MemberResponse;
+import com.kiwes.backend.member.domain.*;
 import com.kiwes.backend.member.domain.kakao.KakaoProfile;
 import com.kiwes.backend.member.domain.kakao.OAuthToken;
 import com.kiwes.backend.member.exception.MemberException;
@@ -26,6 +24,7 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.Objects;
 import java.util.Random;
 
 @Service
@@ -193,10 +192,63 @@ public class MemberService {
                 .memberToken(member.getMemberToken())
                 .gender(member.getGender())
                 .birth(member.getBirthday())
+                .isMe(true)
                 .build();
     }
 
+    public MemberResponse getMember(String memberToken) {
+        Member loginMember = memberRepository.findByKakaoId(Long.parseLong(SecurityUtil.getLoginUsername())).orElseThrow();
+        Member member = memberRepository.findByMemberToken(memberToken).orElseThrow();
+        return MemberResponse.builder()
+                .memberId(member.getMemberId())
+                .kakaoId(member.getKakaoId())
+                .profileImg(member.getProfileImg())
+                .nickname(member.getNickname())
+                .memberToken(member.getMemberToken())
+                .gender(member.getGender())
+                .birth(member.getBirthday())
+                .isMe(Objects.equals(loginMember.getMemberToken(), memberToken))
+                .build();
+    }
 
+    public void edit(String memberToken, MemberEdit memberEdit) throws Exception {
+        Member loginMember = memberRepository.findByKakaoId(Long.parseLong(SecurityUtil.getLoginUsername())).orElseThrow();
+        if(!Objects.equals(memberToken, loginMember.getMemberToken())) {
+            throw new Exception();
+        }
+        MemberEditor.MemberEditorBuilder editorBuilder = loginMember.toEditor();
+
+        if(memberEdit.getNickname() != null) {
+            editorBuilder.nickname(memberEdit.getNickname());
+        }
+
+        if(memberEdit.getGender() != null) {
+            editorBuilder.gender(memberEdit.getGender());
+        }
+
+        if(memberEdit.getBirthday() != null) {
+            editorBuilder.birthday(memberEdit.getBirthday());
+        }
+
+        if(memberEdit.getEmail() != null) {
+            editorBuilder.email(memberEdit.getEmail());
+        }
+
+        if(memberEdit.getMemberIntro() != null) {
+            editorBuilder.memberIntro(memberEdit.getMemberIntro());
+        }
+        loginMember.edit(editorBuilder.build());
+
+    }
+
+
+    public void delete(String memberToken) throws Exception {
+        Member loginMember = memberRepository.findByKakaoId(Long.parseLong(SecurityUtil.getLoginUsername())).orElseThrow();
+        if(!Objects.equals(memberToken, loginMember.getMemberToken())) {
+            throw new Exception();
+        }
+        memberRepository.delete(loginMember);
+    }
 
 
 
