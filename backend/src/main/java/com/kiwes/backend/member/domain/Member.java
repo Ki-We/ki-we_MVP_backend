@@ -110,6 +110,23 @@ public class Member {
         this.email = memberCreate.getEmail();
     }
 
+    public MemberEditor.MemberEditorBuilder toEditor() {
+        return MemberEditor.builder()
+                .nickname(nickname)
+                .gender(gender)
+                .birthday(birthday)
+                .email(email)
+                .memberIntro(memberIntro);
+    }
+
+    public void edit(MemberEditor memberEditor) {
+        nickname = memberEditor.getNickname();
+        gender = memberEditor.getGender();
+        birthday = memberEditor.getBirthday();
+        email = memberEditor.getEmail();
+        memberIntro = memberEditor.getMemberIntro();
+    }
+
 
 
 }
