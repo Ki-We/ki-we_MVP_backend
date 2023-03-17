@@ -21,4 +21,6 @@ public class MemberResponse {
     private String gender;
 
     private String birth;
+
+    private Boolean isMe;
 }
