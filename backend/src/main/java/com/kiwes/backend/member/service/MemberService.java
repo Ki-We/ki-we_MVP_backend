@@ -211,32 +211,34 @@ public class MemberService {
                 .build();
     }
 
-    public void edit(String memberToken, MemberEdit memberEdit) throws Exception {
+    public void edit(String memberToken, MemberEdit memberEdit, MultipartFile multipartFile) throws Exception {
         Member loginMember = memberRepository.findByKakaoId(Long.parseLong(SecurityUtil.getLoginUsername())).orElseThrow();
+
         if(!Objects.equals(memberToken, loginMember.getMemberToken())) {
             throw new Exception();
         }
+
         MemberEditor.MemberEditorBuilder editorBuilder = loginMember.toEditor();
 
         if(memberEdit.getNickname() != null) {
             editorBuilder.nickname(memberEdit.getNickname());
         }
-
         if(memberEdit.getGender() != null) {
             editorBuilder.gender(memberEdit.getGender());
         }
-
         if(memberEdit.getBirthday() != null) {
             editorBuilder.birthday(memberEdit.getBirthday());
         }
-
         if(memberEdit.getEmail() != null) {
             editorBuilder.email(memberEdit.getEmail());
         }
-
         if(memberEdit.getMemberIntro() != null) {
             editorBuilder.memberIntro(memberEdit.getMemberIntro());
         }
+        if(!multipartFile.isEmpty()) {
+            loginMember.updateProfileImage(s3Uploader.getThumbnailPath(s3Uploader.uploadImage(multipartFile)));
+        }
+
         loginMember.edit(editorBuilder.build());
 
     }
