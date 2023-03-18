@@ -7,9 +7,7 @@ import com.kiwes.backend.post.domain.Post;
 import com.kiwes.backend.post.repository.PostRepository;
 import com.kiwes.backend.qna.domain.Qna;
 import com.kiwes.backend.qna.repository.QnaRepository;
-import com.kiwes.backend.reply.domain.Reply;
-import com.kiwes.backend.reply.domain.ReplyCreate;
-import com.kiwes.backend.reply.domain.ReplyResponse;
+import com.kiwes.backend.reply.domain.*;
 import com.kiwes.backend.reply.repository.ReplyRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -62,6 +60,27 @@ public class ReplyService {
 
     }
 
+    public void editReply(Long replyId, ReplyEdit replyEdit) throws Exception{
+        Member loginMember = memberRepository.findByKakaoId(Long.parseLong(SecurityUtil.getLoginUsername())).orElseThrow();
+        Reply reply = replyRepository.findById(replyId).orElseThrow();
+        if(!Objects.equals(reply.getWriter().getMemberToken(), loginMember.getMemberToken())) {
+            throw new Exception();
+        }
 
+        ReplyEditor.ReplyEditorBuilder editorBuilder = reply.toEditor();
+        if(replyEdit.getBody() != null) {
+            editorBuilder.body(replyEdit.getBody());
+        }
+        reply.edit(editorBuilder.build());
+    }
+
+    public void deleteReply(Long replyId) throws Exception {
+        Member loginMember = memberRepository.findByKakaoId(Long.parseLong(SecurityUtil.getLoginUsername())).orElseThrow();
+        Reply reply = replyRepository.findById(replyId).orElseThrow();
+        if(!Objects.equals(reply.getWriter().getMemberToken(), loginMember.getMemberToken())) {
+            throw new Exception();
+        }
+        replyRepository.delete(reply);
+    }
 
 }
