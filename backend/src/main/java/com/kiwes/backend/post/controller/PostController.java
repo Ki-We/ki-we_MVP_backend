@@ -1,6 +1,7 @@
 package com.kiwes.backend.post.controller;
 
 import com.kiwes.backend.post.domain.PostCreate;
+import com.kiwes.backend.post.domain.PostEdit;
 import com.kiwes.backend.post.domain.PostResponse;
 import com.kiwes.backend.post.service.PostService;
 import lombok.RequiredArgsConstructor;
@@ -32,6 +33,26 @@ public class PostController {
     @ResponseStatus(HttpStatus.OK)
     public List<PostResponse> getPostList() {
         return postService.getPostList();
+    }
+
+    @GetMapping("/posts/{memberToken}")
+    public List<PostResponse> getPostListMember(@PathVariable String memberToken) {
+        return postService.getPostListMember(memberToken);
+    }
+
+    @GetMapping("/posts/recommend")
+    public List<PostResponse> getRecommendList() {
+        return postService.getRecommendPost();
+    }
+
+    @PatchMapping("/post/{postId}")
+    public void editPost(@PathVariable Long postId, @ModelAttribute PostEdit postEdit, @RequestPart(required = false) MultipartFile multipartFile) throws Exception {
+        postService.edit(postId, postEdit, multipartFile);
+    }
+
+    @DeleteMapping("/post/{postId}")
+    public void deletePost(@PathVariable Long postId) throws Exception {
+        postService.deletePost(postId);
     }
 
 }
