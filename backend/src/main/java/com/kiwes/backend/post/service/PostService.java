@@ -191,6 +191,76 @@ public class PostService {
         return result;
     }
 
+    public List<PostResponse> getSearchPost(String keyword) {
+        Member loginMember = memberRepository.findByKakaoId(Long.parseLong(SecurityUtil.getLoginUsername())).orElseThrow();
+        List<Post> postList = postRepository.filterPostByKeyword(keyword);
+        List<PostResponse> result = new ArrayList<>();
+        postList.forEach(post -> {
+            result.add(
+                    PostResponse.builder()
+                            .postId(post.getPostId())
+                            .title(post.getTitle())
+                            .body(post.getBody())
+                            .meetingDate(post.getMeetingDate())
+                            .deadLineDate(post.getDeadLineDate())
+                            .place(post.getPlace())
+                            .price(post.getPrice())
+                            .recruitNum(post.getRecruitNum())
+                            .currentNum(post.getCurrentNum())
+                            .meetingGender(post.getMeetingGender())
+                            .language(post.getLanguage())
+                            .category(post.getCategory())
+                            .hashtag(post.getHashtag())
+                            .chatLink(post.getChatLink())
+                            .hostId(post.getHost().getMemberId())
+                            .hostProfileImg(post.getHost().getProfileImg())
+                            .isHost(Objects.equals(loginMember.getMemberToken(), post.getHost().getMemberToken()))
+                            .hasLike(heartRepository.findByMemberAndPost(loginMember, post).isPresent())
+                            .hasJoin(participationRepository.findByMemberAndPost(loginMember, post).isPresent())
+                            .hasComment(commentRepository.findByPost(post).isPresent())
+                            .hasQna(qnaRepository.findByPost(post).isPresent())
+                            .build()
+            );
+        });
+
+        return result;
+    }
+
+    public List<PostResponse> getFilterPost(String category) {
+        Member loginMember = memberRepository.findByKakaoId(Long.parseLong(SecurityUtil.getLoginUsername())).orElseThrow();
+        List<Post> postList = postRepository.filterPostByKeyword(category);
+        List<PostResponse> result = new ArrayList<>();
+        postList.forEach(post -> {
+            result.add(
+                    PostResponse.builder()
+                            .postId(post.getPostId())
+                            .title(post.getTitle())
+                            .body(post.getBody())
+                            .meetingDate(post.getMeetingDate())
+                            .deadLineDate(post.getDeadLineDate())
+                            .place(post.getPlace())
+                            .price(post.getPrice())
+                            .recruitNum(post.getRecruitNum())
+                            .currentNum(post.getCurrentNum())
+                            .meetingGender(post.getMeetingGender())
+                            .language(post.getLanguage())
+                            .category(post.getCategory())
+                            .hashtag(post.getHashtag())
+                            .chatLink(post.getChatLink())
+                            .hostId(post.getHost().getMemberId())
+                            .hostProfileImg(post.getHost().getProfileImg())
+                            .isHost(Objects.equals(loginMember.getMemberToken(), post.getHost().getMemberToken()))
+                            .hasLike(heartRepository.findByMemberAndPost(loginMember, post).isPresent())
+                            .hasJoin(participationRepository.findByMemberAndPost(loginMember, post).isPresent())
+                            .hasComment(commentRepository.findByPost(post).isPresent())
+                            .hasQna(qnaRepository.findByPost(post).isPresent())
+                            .build()
+            );
+        });
+
+        return result;
+    }
+
     public void edit(Long postId, PostEdit postEdit, MultipartFile multipartFile) throws Exception {
         Member loginMember = memberRepository.findByKakaoId(Long.parseLong(SecurityUtil.getLoginUsername())).orElseThrow();
         Post post = postRepository.findById(postId).orElseThrow();
