@@ -38,4 +38,13 @@ public class Comment {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "post_id")
     private Post post;
+
+    public CommentEditor.CommentEditorBuilder toEditor() {
+        return CommentEditor.builder()
+                .body(body);
+    }
+
+    public void edit(CommentEditor commentEditor) {
+        body = commentEditor.getBody();
+    }
 }
