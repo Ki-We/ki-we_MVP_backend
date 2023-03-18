@@ -3,6 +3,7 @@ package com.kiwes.backend.reply.domain;
 import com.kiwes.backend.member.domain.Member;
 import com.kiwes.backend.post.domain.Post;
 import com.kiwes.backend.qna.domain.Qna;
+import com.kiwes.backend.qna.domain.QnaEditor;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -43,4 +44,13 @@ public class Reply {
     @OneToOne
     @JoinColumn(name = "qna_id")
     private Qna qna;
+
+    public ReplyEditor.ReplyEditorBuilder toEditor() {
+        return ReplyEditor.builder()
+                .body(body);
+    }
+
+    public void edit(ReplyEditor replyEditor) {
+        body = replyEditor.getBody();
+    }
 }
