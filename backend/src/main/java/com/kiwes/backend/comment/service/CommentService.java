@@ -54,6 +54,26 @@ public class CommentService {
         return result;
     }
 
+    public List<CommentResponse> getCommentMember(String memberToken) {
+        Member loginMember = memberRepository.findByKakaoId(Long.parseLong(SecurityUtil.getLoginUsername())).orElseThrow();
+        Member member = memberRepository.findByMemberToken(memberToken).orElseThrow();
+        List<Comment> commentList = commentRepository.findAllByWriter(member);
+        List<CommentResponse> result = new ArrayList<>();
+        commentList.forEach(comment ->
+                result.add(CommentResponse.builder()
+                        .commentId(comment.getCommentId())
+                        .body(comment.getBody())
+                        .lastModifiedTime(comment.getLastModifiedTime())
+                        .writerToken(comment.getWriter().getMemberToken())
+                        .writerNickname(comment.getWriter().getNickname())
+                        .writerProfileImg(comment.getWriter().getProfileImg())
+                        .isWriter(Objects.equals(memberToken, loginMember.getMemberToken()))
+                        .build())
+        );
+
+        return result;
+    }
+
     public void editComment(Long commentId, CommentEdit commentEdit) throws Exception{
         Member loginMember = memberRepository.findByKakaoId(Long.parseLong(SecurityUtil.getLoginUsername())).orElseThrow();
         Comment comment = commentRepository.findById(commentId).orElseThrow();
