@@ -13,4 +13,10 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 
     @Query(value = "SELECT * FROM post ORDER BY view_count DESC limit 10", nativeQuery = true)
     List<Post> recommendPost();
+
+    @Query(value = "SELECT * FROM post WHERE category LIKE %:category%", nativeQuery = true)
+    List<Post> filterPostByCategory(String category);
+
+    @Query(value = "SELECT * FROM post WHERE title LIKE %:keyword% OR body LIKE %:keyword% OR hashtag LIKE %:keyword% OR category LIKE %:keyword%", nativeQuery = true)
+    List<Post> filterPostByKeyword(String keyword);
 }
