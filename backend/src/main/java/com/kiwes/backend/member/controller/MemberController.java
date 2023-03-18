@@ -54,25 +54,20 @@ public class MemberController {
 
     }
 
-    @ResponseStatus(HttpStatus.OK)
     @GetMapping("/oauth/me")
     public MemberResponse getMyProfile(HttpServletResponse response) {
         return memberService.getMyInfo();
     }
 
-    @ResponseStatus(HttpStatus.OK)
     @GetMapping("/oauth/{memberToken}")
     public MemberResponse getMember(@PathVariable String memberToken) {
         return memberService.getMember(memberToken);
     }
 
-
-    @ResponseStatus(HttpStatus.OK)
     @PatchMapping("/member/{memberToken}")
-    public void editMember(@PathVariable String memberToken, @RequestBody MemberEdit memberEdit) throws Exception {
-        memberService.edit(memberToken, memberEdit);
+    public void editMember(@PathVariable String memberToken, @ModelAttribute MemberEdit memberEdit, @RequestPart(required = false)MultipartFile multipartFile) throws Exception {
+        memberService.edit(memberToken, memberEdit, multipartFile);
     }
-
 
     @PostMapping("/mail")
     public String mailConfirm(@RequestBody String email) throws Exception {
