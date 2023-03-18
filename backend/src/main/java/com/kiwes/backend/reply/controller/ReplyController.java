@@ -1,7 +1,7 @@
 package com.kiwes.backend.reply.controller;
 
-import com.kiwes.backend.qna.domain.QnaCreate;
 import com.kiwes.backend.reply.domain.ReplyCreate;
+import com.kiwes.backend.reply.domain.ReplyEdit;
 import com.kiwes.backend.reply.domain.ReplyResponse;
 import com.kiwes.backend.reply.service.ReplyService;
 import lombok.RequiredArgsConstructor;
@@ -24,5 +24,15 @@ public class ReplyController {
     @ResponseStatus(HttpStatus.OK)
     public ReplyResponse getReply(@PathVariable Long qnaId) {
         return replyService.getReply(qnaId);
+    }
+
+    @PatchMapping("/reply/{replyId}")
+    public void editReply(@PathVariable Long replyId, @RequestBody ReplyEdit replyEdit) throws Exception {
+        replyService.editReply(replyId, replyEdit);
+    }
+
+    @DeleteMapping("/reply/{replyId}")
+    public void deleteReply(@PathVariable Long replyId) throws Exception{
+        replyService.deleteReply(replyId);
     }
 }
