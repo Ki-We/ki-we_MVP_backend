@@ -7,13 +7,12 @@ import com.kiwes.backend.post.domain.Post;
 import com.kiwes.backend.post.repository.PostRepository;
 import com.kiwes.backend.qna.domain.*;
 import com.kiwes.backend.qna.repository.QnaRepository;
+import com.kiwes.backend.reply.domain.Reply;
 import com.kiwes.backend.reply.repository.ReplyRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -54,6 +53,44 @@ public class QnaService {
                         .hasReply(replyRepository.findByQna(qna).isPresent())
                         .build())
         );
+
+        return result;
+    }
+
+    public List<QnaReplyResponse> getQnaMember(String memberToken) {
+        Member loginMember = memberRepository.findByKakaoId(Long.parseLong(SecurityUtil.getLoginUsername())).orElseThrow();
+        Member member = memberRepository.findByMemberToken(memberToken).orElseThrow();
+        List<Qna> qnaList = qnaRepository.findAllByWriter(member);
+        List<Reply> replyList = replyRepository.findAllByWriter(member);
+        List<QnaReplyResponse> result = new ArrayList<>();
+        qnaList.forEach(qna ->
+                result.add(QnaReplyResponse.builder()
+                        .id(qna.getQnaId())
+                        .postId(qna.getPost().getPostId())
+                        .body(qna.getBody())
+                        .lastModifiedTime(qna.getLastModifiedTime())
+                        .writerToken(qna.getWriter().getMemberToken())
+                        .writerNickname(qna.getWriter().getNickname())
+                        .writerProfileImg(qna.getWriter().getProfileImg())
+                        .isWriter(Objects.equals(memberToken, loginMember.getMemberToken()))
+                        .build())
+        );
+
+        replyList.forEach(reply ->
+                result.add(QnaReplyResponse.builder()
+                        .id(reply.getReplyId())
+                        .postId(reply.getPost().getPostId())
+                        .body(reply.getBody())
+                        .lastModifiedTime(reply.getLastModifiedTime())
+                        .writerToken(reply.getWriter().getMemberToken())
+                        .writerNickname(reply.getWriter().getNickname())
+                        .writerProfileImg(reply.getWriter().getProfileImg())
+                        .isWriter(Objects.equals(memberToken, loginMember.getMemberToken()))
+                        .build())
+        );
+
+        Comparator<QnaReplyResponse> comparator = Comparator.comparing(QnaReplyResponse::getLastModifiedTime);
+        result.sort(comparator);
 
         return result;
     }
