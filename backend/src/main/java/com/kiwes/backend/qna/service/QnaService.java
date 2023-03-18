@@ -5,9 +5,7 @@ import com.kiwes.backend.member.domain.Member;
 import com.kiwes.backend.member.repository.MemberRepository;
 import com.kiwes.backend.post.domain.Post;
 import com.kiwes.backend.post.repository.PostRepository;
-import com.kiwes.backend.qna.domain.Qna;
-import com.kiwes.backend.qna.domain.QnaCreate;
-import com.kiwes.backend.qna.domain.QnaResponse;
+import com.kiwes.backend.qna.domain.*;
 import com.kiwes.backend.qna.repository.QnaRepository;
 import com.kiwes.backend.reply.repository.ReplyRepository;
 import lombok.RequiredArgsConstructor;
@@ -58,5 +56,28 @@ public class QnaService {
         );
 
         return result;
+    }
+
+    public void editQna(Long qnaId, QnaEdit qnaEdit) throws Exception{
+        Member loginMember = memberRepository.findByKakaoId(Long.parseLong(SecurityUtil.getLoginUsername())).orElseThrow();
+        Qna qna = qnaRepository.findById(qnaId).orElseThrow();
+        if(!Objects.equals(qna.getWriter().getMemberToken(), loginMember.getMemberToken())) {
+            throw new Exception();
+        }
+
+        QnaEditor.QnaEditorBuilder editorBuilder = qna.toEditor();
+        if(qnaEdit.getBody() != null) {
+            editorBuilder.body(qnaEdit.getBody());
+        }
+        qna.edit(editorBuilder.build());
+    }
+
+    public void deleteQna(Long qnaId) throws Exception {
+        Member loginMember = memberRepository.findByKakaoId(Long.parseLong(SecurityUtil.getLoginUsername())).orElseThrow();
+        Qna qna = qnaRepository.findById(qnaId).orElseThrow();
+        if(!Objects.equals(qna.getWriter().getMemberToken(), loginMember.getMemberToken())) {
+            throw new Exception();
+        }
+        qnaRepository.delete(qna);
     }
 }
