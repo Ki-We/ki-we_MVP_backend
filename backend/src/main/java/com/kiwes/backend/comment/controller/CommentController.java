@@ -28,6 +28,11 @@ public class CommentController {
         return commentService.getComment(postId);
     }
 
+    @GetMapping("/comment/{memberToken}")
+    public List<CommentResponse> getCommentListMember(@PathVariable String memberToken) {
+        return commentService.getCommentMember(memberToken);
+    }
+
 
     @PatchMapping("/comment/{commentId}")
     public void editComment(@PathVariable Long commentId, @RequestBody CommentEdit commentEdit) throws Exception {
