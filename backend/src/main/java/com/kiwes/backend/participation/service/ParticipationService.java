@@ -11,6 +11,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Objects;
+
 @Service
 @RequiredArgsConstructor
 @Transactional
@@ -27,12 +29,16 @@ public class ParticipationService {
         if(participationRepository.findByMemberAndPost(member, post).isPresent()) {
             throw new Exception();
         }
+        if(Objects.equals(post.getCurrentNum(), post.getRecruitNum())) {
+            throw new Exception();
+        }
 
         Participation join = Participation.builder()
                 .member(member)
                 .post(post)
                 .build();
 
+        post.upperMember();
         participationRepository.save(join);
     }
 }
