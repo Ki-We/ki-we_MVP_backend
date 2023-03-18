@@ -18,6 +18,7 @@ public class PostResponse {
     private String place;
     private String price;
     private Long recruitNum;
+    private Long currentNum;
     private String meetingGender;
     private String language;
     private String category;
