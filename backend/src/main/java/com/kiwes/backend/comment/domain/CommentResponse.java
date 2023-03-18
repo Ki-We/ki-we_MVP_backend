@@ -11,6 +11,7 @@ import java.sql.Timestamp;
 @AllArgsConstructor
 public class CommentResponse {
     private Long commentId;
+    private Long postId;
     private String body;
     private String writerNickname;
     private String writerProfileImg;
