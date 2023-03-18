@@ -47,6 +47,8 @@ public class Post {
 
     private Long recruitNum;
 
+    private Long currentNum;
+
     private String meetingGender;
 
     private String language;
@@ -96,6 +98,45 @@ public class Post {
 
     public void upperView() {
         this.viewCount += 1L;
+    }
+
+    public void upperMember() {
+        this.currentNum += 1L;
+    }
+
+    public void cancelMember() {
+        this.currentNum -= 1L;
+    }
+
+    public PostEditor.PostEditorBuilder toEditor() {
+        return PostEditor.builder()
+                .title(title)
+                .body(body)
+                .meetingDate(meetingDate)
+                .deadLineDate(deadLineDate)
+                .place(place)
+                .price(price)
+                .recruitNum(recruitNum)
+                .meetingGender(meetingGender)
+                .language(language)
+                .category(category)
+                .hashtag(hashtag)
+                .chatLink(chatLink);
+    }
+
+    public void edit(PostEditor postEditor) {
+        title = postEditor.getTitle();
+        body = postEditor.getBody();
+        meetingDate = postEditor.getMeetingDate();
+        deadLineDate = postEditor.getDeadLineDate();
+        place = postEditor.getPlace();
+        price = postEditor.getPrice();
+        recruitNum = postEditor.getRecruitNum();
+        meetingGender = postEditor.getMeetingGender();
+        language = postEditor.getLanguage();
+        category = postEditor.getCategory();
+        hashtag = postEditor.getHashtag();
+        chatLink = postEditor.getChatLink();
     }
 
 
