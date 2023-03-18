@@ -45,6 +45,16 @@ public class PostController {
         return postService.getRecommendPost();
     }
 
+    @GetMapping("/posts/{category}")
+    public List<PostResponse> getFilter(@PathVariable String category) {
+        return postService.getFilterPost(category);
+    }
+
+    @GetMapping("/posts/{keyword}")
+    public List<PostResponse> getSearch(@PathVariable String keyword) {
+        return postService.getSearchPost(keyword);
+    }
+
     @PatchMapping("/post/{postId}")
     public void editPost(@PathVariable Long postId, @ModelAttribute PostEdit postEdit, @RequestPart(required = false) MultipartFile multipartFile) throws Exception {
         postService.edit(postId, postEdit, multipartFile);
