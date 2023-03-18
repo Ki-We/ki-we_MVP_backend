@@ -2,6 +2,7 @@ package com.kiwes.backend.qna.controller;
 
 import com.kiwes.backend.qna.domain.QnaCreate;
 import com.kiwes.backend.qna.domain.QnaEdit;
+import com.kiwes.backend.qna.domain.QnaReplyResponse;
 import com.kiwes.backend.qna.domain.QnaResponse;
 import com.kiwes.backend.qna.service.QnaService;
 import lombok.RequiredArgsConstructor;
@@ -26,6 +27,11 @@ public class QnaController {
     @ResponseStatus(HttpStatus.OK)
     public List<QnaResponse> getQna(@PathVariable Long postId) {
         return qnaService.getQna(postId);
+    }
+    
+    @GetMapping("/qna/{memberToken}")
+    public List<QnaReplyResponse> getQnaReply(@PathVariable String memberToken) {
+        return qnaService.getQnaMember(memberToken);
     }
 
     @PatchMapping("/qna/{qnaId}")
