@@ -1,6 +1,7 @@
 package com.kiwes.backend.comment.controller;
 
 import com.kiwes.backend.comment.domain.CommentCreate;
+import com.kiwes.backend.comment.domain.CommentEdit;
 import com.kiwes.backend.comment.domain.CommentResponse;
 import com.kiwes.backend.comment.service.CommentService;
 import lombok.RequiredArgsConstructor;
@@ -27,5 +28,15 @@ public class CommentController {
         return commentService.getComment(postId);
     }
 
+
+    @PatchMapping("/comment/{commentId}")
+    public void editComment(@PathVariable Long commentId, @RequestBody CommentEdit commentEdit) throws Exception {
+        commentService.editComment(commentId, commentEdit);
+    }
+
+    @DeleteMapping("/comment/{commentId}")
+    public void deleteComment(@PathVariable Long commentId) throws Exception {
+        commentService.deleteComment(commentId);
+    }
     
 }
