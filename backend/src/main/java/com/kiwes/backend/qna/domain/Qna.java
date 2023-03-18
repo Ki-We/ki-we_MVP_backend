@@ -47,4 +47,13 @@ public class Qna {
     public void addReply(Reply reply) {
         this.reply = reply;
     }
+
+    public QnaEditor.QnaEditorBuilder toEditor() {
+        return QnaEditor.builder()
+                .body(body);
+    }
+
+    public void edit(QnaEditor qnaEditor) {
+        body = qnaEditor.getBody();
+    }
 }
