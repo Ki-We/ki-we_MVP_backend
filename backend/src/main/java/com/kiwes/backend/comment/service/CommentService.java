@@ -1,8 +1,6 @@
 package com.kiwes.backend.comment.service;
 
-import com.kiwes.backend.comment.domain.Comment;
-import com.kiwes.backend.comment.domain.CommentCreate;
-import com.kiwes.backend.comment.domain.CommentResponse;
+import com.kiwes.backend.comment.domain.*;
 import com.kiwes.backend.comment.repository.CommentRepository;
 import com.kiwes.backend.global.utils.SecurityUtil;
 import com.kiwes.backend.member.domain.Member;
@@ -54,5 +52,28 @@ public class CommentService {
         );
 
         return result;
+    }
+
+    public void editComment(Long commentId, CommentEdit commentEdit) throws Exception{
+        Member loginMember = memberRepository.findByKakaoId(Long.parseLong(SecurityUtil.getLoginUsername())).orElseThrow();
+        Comment comment = commentRepository.findById(commentId).orElseThrow();
+        if(!Objects.equals(comment.getWriter().getMemberToken(), loginMember.getMemberToken())) {
+            throw new Exception();
+        }
+
+        CommentEditor.CommentEditorBuilder editorBuilder = comment.toEditor();
+        if(commentEdit.getBody() != null) {
+            editorBuilder.body(commentEdit.getBody());
+        }
+        comment.edit(editorBuilder.build());
+    }
+
+    public void deleteComment(Long commentId) throws Exception {
+        Member loginMember = memberRepository.findByKakaoId(Long.parseLong(SecurityUtil.getLoginUsername())).orElseThrow();
+        Comment comment = commentRepository.findById(commentId).orElseThrow();
+        if(!Objects.equals(comment.getWriter().getMemberToken(), loginMember.getMemberToken())) {
+            throw new Exception();
+        }
+        commentRepository.delete(comment);
     }
 }
