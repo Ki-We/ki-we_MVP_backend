@@ -54,12 +54,12 @@ public class MemberController {
 
     }
 
-    @GetMapping("/oauth/me")
+    @GetMapping("/member/me")
     public MemberResponse getMyProfile(HttpServletResponse response) {
         return memberService.getMyInfo();
     }
 
-    @GetMapping("/oauth/{memberToken}")
+    @GetMapping("/member/{memberToken}")
     public MemberResponse getMember(@PathVariable String memberToken) {
         return memberService.getMember(memberToken);
     }
@@ -70,7 +70,7 @@ public class MemberController {
     }
 
     @PostMapping("/mail")
-    public String mailConfirm(@RequestBody String email) throws Exception {
+    public String mailConfirm(@RequestParam String email) throws Exception {
         String code = mailService.sendSimpleMessage(email);
         return code;
     }
