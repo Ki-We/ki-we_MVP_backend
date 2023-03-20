@@ -28,7 +28,7 @@ public class QnaController {
     public List<QnaResponse> getQna(@PathVariable Long postId) {
         return qnaService.getQna(postId);
     }
-    
+
     @GetMapping("/qna/{memberToken}")
     public List<QnaReplyResponse> getQnaReply(@PathVariable String memberToken) {
         return qnaService.getQnaMember(memberToken);
