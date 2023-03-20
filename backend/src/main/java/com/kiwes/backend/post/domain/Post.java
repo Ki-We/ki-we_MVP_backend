@@ -66,13 +66,13 @@ public class Post {
     private Member host;
 
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Comment> commentList = new ArrayList<>();
+    private final List<Comment> commentList = new ArrayList<>();
 
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Qna> qnaList = new ArrayList<>();
+    private final List<Qna> qnaList = new ArrayList<>();
 
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Reply> replyList = new ArrayList<>();
+    private final List<Reply> replyList = new ArrayList<>();
 
 
     public void addComment(Comment comment) {
